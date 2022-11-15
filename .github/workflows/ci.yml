@@ -7,16 +7,34 @@ on:
     branches: [ main ]
 
 jobs:
-  macos:
-    name: "Unit Tests"
-    runs-on: macos-11
+  lint:
+    name: Linting
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Ensure Xcode Version
-        run: | 
-          sudo xcode-select -s "/Applications/Xcode_12.5.app"
+      - name: SwiftLint
+        uses: norio-nomura/action-swiftlint@3.2.1
 
-      - name: Build and Test
-        run: swift test
+  test:
+    name: "Unit Tests"
+    runs-on: macos-12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build and Test (macOS)
+        run: |
+          set -o pipefail && env NSUnbufferedIO=YES
+          xcodebuild build-for-testing -usePackageSupportBuiltinSCM -scheme "$XCODE_SCHEME" -destination "platform=macOS" | xcpretty
+
+      - name: Build and Test (iOS)
+        run: |
+          set -o pipefail && env NSUnbufferedIO=YES
+          xcodebuild build-for-testing -usePackageSupportBuiltinSCM -scheme "$XCODE_SCHEME" -destination "platform=iOS Simulator,OS=latest,name=iPhone 12" | xcpretty
+
+      - name: Build and Test (Mac Catalyst)
+        run: |
+          set -o pipefail && env NSUnbufferedIO=YES
+          xcodebuild build-for-testing -usePackageSupportBuiltinSCM -scheme "$XCODE_SCHEME" -destination "platform=macOS,variant=Mac Catalyst" | xcpretty
