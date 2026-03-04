@@ -12,29 +12,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: SwiftLint
         uses: norio-nomura/action-swiftlint@3.2.1
 
   test:
     name: "Unit Tests"
-    runs-on: macos-12
+    runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Build and Test (macOS)
-        run: |
-          set -o pipefail && env NSUnbufferedIO=YES
-          xcodebuild build-for-testing -usePackageSupportBuiltinSCM -scheme "$XCODE_SCHEME" -destination "platform=macOS" | xcpretty
+        uses: sersoft-gmbh/xcodebuild-action@v4
+        with:
+          spm-package: "./"
+          scheme: Package
+          destination: platform=macOS
+          action: test
 
       - name: Build and Test (iOS)
-        run: |
-          set -o pipefail && env NSUnbufferedIO=YES
-          xcodebuild build-for-testing -usePackageSupportBuiltinSCM -scheme "$XCODE_SCHEME" -destination "platform=iOS Simulator,OS=latest,name=iPhone 12" | xcpretty
-
-      - name: Build and Test (Mac Catalyst)
-        run: |
-          set -o pipefail && env NSUnbufferedIO=YES
-          xcodebuild build-for-testing -usePackageSupportBuiltinSCM -scheme "$XCODE_SCHEME" -destination "platform=macOS,variant=Mac Catalyst" | xcpretty
+        uses: sersoft-gmbh/xcodebuild-action@v4
+        with:
+          spm-package: "./"
+          scheme: Package
+          destination: platform=iOS Simulator
+          action: test
