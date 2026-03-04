@@ -4,4 +4,4 @@ A template repository with the default configuration values for a new Swift Pack
 
 ## License
 
-Copyright 2021 Justin Williams. Licensed under the MIT license.
+Copyright 2026 Justin Williams. Licensed under the MIT license.
