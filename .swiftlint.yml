@@ -11,10 +11,6 @@ opt_in_rules:
   - private_outlet
   - raw_value_for_camel_cased_codable_enum
 
-included:
-  - Main Application
-  - Shared Code
-
 excluded:
   - bin
   - fastlane
